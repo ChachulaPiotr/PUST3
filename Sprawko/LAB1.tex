@@ -1,0 +1,44 @@
+\chapter {Pomiar w punkcie pracy}
+\label{zad1l}
+
+\section{Komunikacja z obiektem}
+
+Komunikacja z obiektem odobywa się za pomocą funkcji napisanych w środowisku MatLab. Najprostszy program użyty w tym projekcie, który posłużył także do późniejszego pobierania odpowiedzi skokowych znajduje się poniżej (jest to fragment skryptu \verb|L3_1.m|).
+
+
+%\begin{lstlisting}[style=custommatlab,frame=single]
+\begin{lstlisting}[style=custommatlab]
+
+
+    addpath('F:\SerialCommunication'); % add a path to the functions
+    initSerialControl COM3 % initialise com port
+   
+    N = 420;
+    step_response = zeros(N+1,1);
+    i = 0;
+    
+    while(i<=N)
+        %% obtaining measurements
+        measurements = readMeasurements(1:7); % read measurements from 1 to 1
+        
+        %% processing of the measurements and new control values calculation
+        disp([measurements(1),i]);
+        step_response(i+1)=measurements(1);
+        
+        %% sending new values of control signals
+        sendNonlinearControls(29)  % new corresponding control valuesdisp(measurements); % process measurements
+      
+        i=i+1;
+        step_response(i)=measurements(1);
+        
+        waitForNewIteration(); % wait for new batch of measurements to be ready
+        
+    end
+
+\end{lstlisting} 
+
+W tym zadaniu używamy funkcji \verb|sendNonlinearControls|, który wysyła sterowanie w sposób symulujący nieliniowość obiektu. Napisany skrypt działał poprawnie, pozwala na sterowanie sygnałami G1, W1 oraz pomiar T1.
+
+\section{Punkt pracy}
+
+Doprowadzono obiekt do punktu pracy, tj. ustawiono wartości sygnałów W1 na 50, G1 na 29 i poczekano na ustabilizowanie obiektu (ponieważ obiekt jest rzeczywisty wahania temperatury są nieuniknione, zwłaszcza biorąc pod uwagę fakt lokalizacji stanowiska nr 4 w miejscu obok którego przechodzi dużo osób - wszelkie pomiary teraźniejsze oraz późniejsze mogą być zaburzone właśnie przez to). Wartość temperatury w punkcie pracy wynosi T1=\num{35,43}\degree C.
