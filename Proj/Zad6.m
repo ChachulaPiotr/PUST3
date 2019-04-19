@@ -2,34 +2,37 @@ clear variables
 close all
 load('stepRes');
 load('charStat');
-il = 1;
+il = 5;
 Umax = 1;
 Umin = -1;
 Ur = [0:(2/(il+1)):((il+1)*2/(il+1))];
 Ur = Ur -1;
+%Ur = [0 -0.5 0.2 0.7 1];
 Ur = round(Ur,1);
 c = zeros(1,il);
 b = zeros(1,il);
 for j = 1:il
     c(j) = charStat(Ur(j+1)*10+11);
-    b(j) = (charStat(Ur(j+1)*10+11) - charStat(Ur(j)*10+11))*0.5;
+    b(j) = (charStat(Ur(j+1)*10+11) - charStat(Ur(j)*10+11))*0.4;
 end
 Ur = Ur(2:il+1);
 % zmienne i macierze regulatora
-%D=length(S(1,:));
-D = 20;
+D=length(S(1,:));
+%D = 15;
 N=D;
 Nu=D;
 if il == 2
-    lambda = [1 1];
+    lambda = [100 100];
 elseif il == 3
-    lambda = [1 1 1];
+    lambda = [100 10 1000];
 elseif il == 4
-    lambda = [1 1 1 1];
+    lambda = [10 10 10 10];
 elseif il == 5
-    lambda = [100 100 100 100 100];
+    lambda = [100 100 1000 100 1000];
 elseif il == 1
-    lambda = 1700;
+    lambda = 100;
+elseif il == 10
+    lambda = [1000 1000 1000 1000 1000 1000 1000 1000 1000 1000];
 end
 ku = zeros(il,D-1);
 ke = zeros(1,il);
@@ -71,7 +74,12 @@ n=1000;
 U = U0*ones(1,n);
 Y = Y0*ones(1,n);
 Yz = Y;
-Yz(1:end) = 1;
+Yz(1:end) = 0.1;
+Yz(1:150) = 0.1;
+Yz(151:300)= 1;
+Yz(301:500)= 5;
+Yz(501:700)= -0.1;
+Yz(701:end)=3;
 e = zeros(1,n);
 
 for k = start:n
@@ -84,14 +92,15 @@ for k = start:n
     for i = 1:il
         deltauk(i) = ke(i)*e(k)-ku(i,:)*deltaup';
         w(i) = exp(-((Y(k)-c(i))/b(i))^2);
+        %w(i) = 1;
     end
     DELTAuk = w*deltauk/sum(w);
     for i = D-1:-1:2
       deltaup(i) = deltaup(i-1);
     end
-    deltaup(1) = DELTAuk;
-    U(k) = U(k-1)+deltaup(1);
+    U(k) = U(k-1)+DELTAuk;
     U(k) = max(min(U(k),Umax),Umin);
+    deltaup(1) = U(k) - U(k-1);
 end
 plot(Y);
 hold on;

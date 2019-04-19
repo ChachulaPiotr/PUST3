@@ -17,4 +17,4 @@ for i = 1:21
     y = y/0.1;
     S(L,:)=y(2:end);
 end
-
+save('StepRes.mat','S');

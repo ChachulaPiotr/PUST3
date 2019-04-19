@@ -1,5 +1,5 @@
 clear variables
-close all
+%close all
 Umax = 1;
 Umin = -1;
 U0 = 0;
@@ -9,7 +9,11 @@ n=1000;
 U = U0*ones(1,n);
 Y = Y0*ones(1,n);
 Yz = Y;
-Yz(1:end) = 1;
+Yz(1:150) = 0.1;
+Yz(151:300)= 1;
+Yz(301:500)= 5;
+Yz(501:700)= -0.1;
+Yz(701:end)=3;
 e = zeros(1,n);
 Tp = 1;
 kp = 0.1;
