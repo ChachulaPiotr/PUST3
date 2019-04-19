@@ -68,6 +68,7 @@ function [error] = DMC(paras)
         U(k) = max(min(U(k),Umax),Umin);
         deltaup(1) = U(k) - U(k-1);
     end
+    error = (Yz-Y)*(Yz-Y)';
     plot(Y);
     hold on;
     plot(Yz,'--r');

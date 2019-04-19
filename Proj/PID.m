@@ -1,4 +1,5 @@
 function [error] = PID(paras)
+    load('charStat.mat')
     Umax = 1;
     Umin = -1;
     U0 = 0;
@@ -8,16 +9,14 @@ function [error] = PID(paras)
     U = U0*ones(1,n);
     Y = Y0*ones(1,n);
     Yz = Y;
-    Yz(1:150) = 0.1;
-    Yz(151:300)= 1;
-    Yz(301:500)= 5;
-    Yz(501:700)= -0.1;
-    Yz(701:end)=3;
+%     Yz(1:150) = 0.1;
+%     Yz(151:300)= 1;
+%     Yz(301:500)= 5;
+%     Yz(501:700)= -0.1;
+%     Yz(701:end)=3;
+     Yz(1:end) = charStat(0.2*10+11);
     e = zeros(1,n);
     Tp = 1;
-%     kp = 0.1;
-%     Ti = 5;
-%     Td = 0.5;
     kp = paras(1);
     Ti = paras(2);
     Td = paras(3);
@@ -35,7 +34,7 @@ function [error] = PID(paras)
         U(k) = max(min(U(k),Umax),Umin);
     end
     error = (Yz-Y)*(Yz-Y)';
-    % plot(Y);
-    % hold on;
-    % plot(Yz,'--r');
+    plot(Y);
+    hold on;
+    plot(Yz,'--r');
 end
